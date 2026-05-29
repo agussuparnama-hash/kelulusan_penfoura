@@ -134,18 +134,6 @@
             transform: none;
         }
 
-        /* Tampilan Waktu / Timer info */
-        .timer-info {
-            margin-top: 15px;
-            padding: 12px;
-            background: rgba(59, 130, 246, 0.08);
-            border: 1px dashed var(--primary);
-            border-radius: 12px;
-            font-size: 0.88rem;
-            color: #1e40af;
-            font-weight: 600;
-        }
-
         /* Panel Hasil Pengumuman Kelulusan */
         .result-panel {
             display: none;
@@ -280,7 +268,6 @@
     <div class="search-box">
         <input type="text" id="inputNisn" class="input-nisn" placeholder="MASUKKAN NISN" maxlength="10" autocomplete="off">
         <button type="button" id="btnPeriksa" class="btn-periksa" onclick="periksaKelulusan()">PERIKSA KELULUSAN</button>
-        <div id="timerInfo" class="timer-info">Mengecek waktu akses...</div>
     </div>
 
     <div id="errorBox" class="error-message"></div>
@@ -317,7 +304,7 @@
 <script>
     // DATABASE DATA SISWA (LENGKAP PHOTO BERBASIS REKREASI LINK FOLDER)
     const dataSiswa = [
-          {"nis": "5945", "nisn": "0108263744", "nama": "I GEDE BAGUS ARINATA", "kelas": "IX A", "status": "LULUS", "pesan": "", "photo": "foto-siswa/0108263744.jpg"},
+  {"nis": "5945", "nisn": "0108263744", "nama": "I GEDE BAGUS ARINATA", "kelas": "IX A", "status": "LULUS", "pesan": "", "photo": "foto-siswa/0108263744.jpg"},
   {"nis": "5946", "nisn": "0116947706", "nama": "I GEDE PUTU ADITYA WIDIADNYANA", "kelas": "IX A", "status": "LULUS", "pesan": "", "photo": "foto-siswa/0116947706.jpg"},
   {"nis": "5947", "nisn": "0101334696", "nama": "I KADE ADITYA", "kelas": "IX A", "status": "LULUS", "pesan": "", "photo": "foto-siswa/0101334696.jpg"},
   {"nis": "5948", "nisn": "0107375477", "nama": "I KADE BAGUS RESTU MARTA DWIPAYANA", "kelas": "IX A", "status": "LULUS", "pesan": "", "photo": "foto-siswa/0107375477.jpg"},
@@ -529,73 +516,16 @@
   {"nis": "6134", "nisn": "0102375174", "nama": "PUTU ADITYA PRATAMA", "kelas": "IX F", "status": "LULUS", "pesan": "", "photo": "foto-siswa/0102375174.jpg"}
     ];
 
-    // Mengganti semua pesan sukses siswa sesuai request secara otomatis melalui skrip
+    // Mengganti semua pesan sukses siswa secara otomatis melalui skrip
     const pesanBaru = "Selamat dan sukses Ananda Telah Menyelesaikan Pendidikan di SMP Negeri 4 Amlapura\n\n\"Kelulusan bukanlah akhir dari sebuah penjelajahan, melainkan titik awal di mana sayapmu diuji untuk terbang lebih tinggi. Jadikan ilmu sebagai kompas, dan ketulusan sebagai bintang penunjuk arah.\"";
     dataSiswa.forEach(siswa => {
         siswa.pesan = pesanBaru;
     });
 
-    // PENGATURAN TIMER & PEMBATASAN AKSES (WITA = UTC + 8)
-    // Tanggal target akses: 2 Juni 2026 pukul 06:00 WITA s.d 24:00 WITA
-    const startTime = new Date('2026-06-02T06:00:00+08:00').getTime();
-    const endTime = new Date('2026-06-02T24:00:00+08:00').getTime();
-    let aksesDiizinkan = false;
-
-    function updateTimer() {
-        const sekarang = new Date().getTime();
-        const btnPeriksa = document.getElementById('btnPeriksa');
-        const timerInfo = document.getElementById('timerInfo');
-        const errorBox = document.getElementById('errorBox');
-        const resultPanel = document.getElementById('resultPanel');
-
-        if (sekarang < startTime) {
-            // Belum waktunya dibuka
-            aksesDiizinkan = false;
-            btnPeriksa.disabled = true;
-            
-            const selisih = startTime - sekarang;
-            const hari = Math.floor(selisih / (1000 * 60 * 60 * 24));
-            const jam = Math.floor((selisih % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const menit = Math.floor((selisih % (1000 * 60 * 60)) / (1000 * 60));
-            const detik = Math.floor((selisih % (1000 * 60)) / 1000);
-
-            timerInfo.innerHTML = `⏱️ Dibuka dalam: ${hari}h ${jam}j ${menit}m ${detik}d<br><small>(Aktif: 2 Juni 2026 pukul 06.00 WITA)</small>`;
-        } else if (sekarang >= startTime && sekarang <= endTime) {
-            // Berada di dalam rentang waktu yang diizinkan
-            aksesDiizinkan = true;
-            btnPeriksa.disabled = false;
-            timerInfo.innerHTML = "🟢 Sistem Pengumuman Kelulusan Telah Dibuka!";
-            timerInfo.style.background = "rgba(16, 185, 129, 0.08)";
-            timerInfo.style.borderColor = "var(--success)";
-            timerInfo.style.color = "#065f46";
-        } else {
-            // Sudah melewati batas waktu (pukul 24:00 WITA)
-            aksesDiizinkan = false;
-            btnPeriksa.disabled = true;
-            timerInfo.innerHTML = "🔴 Batas waktu akses kelulusan telah berakhir.";
-            timerInfo.style.background = "rgba(239, 68, 68, 0.08)";
-            timerInfo.style.borderColor = "var(--danger)";
-            timerInfo.style.color = "#991b1b";
-            resultPanel.style.display = 'none';
-        }
-    }
-
-    // Jalankan timer setiap 1 detik
-    setInterval(updateTimer, 1000);
-    updateTimer(); // Jalankan fungsi pertama kali saat halaman dimuat
-
     function periksaKelulusan() {
         const inputNisn = document.getElementById('inputNisn').value.trim();
         const errorBox = document.getElementById('errorBox');
         const resultPanel = document.getElementById('resultPanel');
-
-        // Proteksi Tambahan dari sisi fungsi klik tombol
-        if (!aksesDiizinkan) {
-            errorBox.innerText = "❌ Maaf, pengumuman kelulusan hanya dapat diakses pada tanggal 2 Juni 2026 mulai Pukul 06.00 WITA sampai 24.00 WITA.";
-            errorBox.style.display = 'block';
-            resultPanel.style.display = 'none';
-            return;
-        }
 
         errorBox.style.display = 'none';
         resultPanel.style.display = 'none';
