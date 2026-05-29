@@ -339,7 +339,7 @@
   {"nis": "5065", "nisn": "0103834218", "nama": "NI KADEK SUCI", "kelas": "IX A", "status": "LULUS", "pesan": "", "photo": "foto-siswa/0103834218.JPG"},
   {"nis": "5966", "nisn": "0119766877", "nama": "NI KADEK YUNITA DILA PUTRI", "kelas": "IX A", "status": "LULUS", "pesan": "", "photo": "foto-siswa/0119766877.JPG"},
   {"nis": "5967", "nisn": "0113106148", "nama": "NI KETUT AGUSTINI", "kelas": "IX A", "status": "LULUS", "pesan": "", "photo": "foto-siswa/0113106148.JPG"},
-  {"nis": "5968", "nisn": "0119208411", "nama": "NI KETUT CATUR FEBRI ANGRENI", "kelas": "IX A", "status": "LULUS", "pesan": "", "photo": "foto-siswa/0119208411.JPG"},
+  {"nis": "5968", "nisn": "0119208411", "nama": "NI KETUT CATUR FEBRI ANGRENI", "kelas": "IX A", "status": "TIDAK LULUS", "pesan": "", "photo": "foto-siswa/0119208411.JPG"},
   {"nis": "5969", "nisn": "0117231591", "nama": "NI KETUT DEWI SUPRIANINGSIH", "kelas": "IX A", "status": "LULUS", "pesan": "", "photo": "foto-siswa/0117231591.JPG"},
   {"nis": "5970", "nisn": "0119170100", "nama": "NI KETUT MELANI PUTRI", "kelas": "IX A", "status": "LULUS", "pesan": "", "photo": "foto-siswa/0119170100.JPG"},
   {"nis": "5971", "nisn": "0115754910", "nama": "NI KOMANG DWI PUSPITAYANTI", "kelas": "IX A", "status": "LULUS", "pesan": "", "photo": "foto-siswa/0115754910.JPG"},
@@ -528,11 +528,17 @@
   {"nis": "6134", "nisn": "0102375174", "nama": "PUTU ADITYA PRATAMA", "kelas": "IX F", "status": "LULUS", "pesan": "", "photo": "foto-siswa/0102375174.JPG"}
     ];
 
-    // Mengganti semua pesan sukses siswa sesuai request secara otomatis melalui skrip
-    const pesanBaru = "Selamat dan sukses Ananda Telah Menyelesaikan Pendidikan di SMP Negeri 4 Amlapura\n\n\"Kelulusan bukanlah akhir dari sebuah penjelajahan, melainkan titik awal di mana sayapmu diuji untuk terbang lebih tinggi. Jadikan ilmu sebagai kompas, dan ketulusan sebagai bintang penunjuk arah.\"";
-    dataSiswa.forEach(siswa => {
-        siswa.pesan = pesanBaru;
-    });
+    // Mengganti semua pesan sukses siswa secara otomatis melalui skrip
+const pesanBaru = "Selamat dan sukses Ananda Telah Menyelesaikan Pendidikan di SMP Negeri 4 Amlapura\n\n\"Kelulusan bukanlah akhir dari sebuah penjelajahan, melainkan titik awal di mana sayapmu diuji untuk terbang lebih tinggi. Jadikan ilmu sebagai kompas, dan ketulusan sebagai bintang penunjuk arah.\"";
+
+dataSiswa.forEach(siswa => {
+    // GANTI "0108263744" dengan NISN siswa yang ingin dinonaktifkan pesannya
+    if (siswa.nisn === "0119208411") {
+        siswa.pesan = ""; // Mengosongkan pesan untuk siswa ini
+    } else {
+        siswa.pesan = pesanBaru; // Siswa lain tetap mendapatkan pesan utama
+    }
+});
 
     function periksaKelulusan() {
         const inputNisn = document.getElementById('inputNisn').value.trim();
